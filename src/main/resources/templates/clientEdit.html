@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Edit Client - HR Manager</title>
+
+    <link href="assets/img/lanoria23.png" rel="icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600|Roboto:300,400,500" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            padding: 20px;
+        }
+        .form-group label {
+            font-weight: 600;
+        }
+        .btn-primary {
+            background-color: #1877f2;
+            border-color: #1877f2;
+        }
+        .btn-primary:hover {
+            background-color: #165eab;
+            border-color: #165eab;
+        }
+        .text-center {
+            font-size: 14px;
+        }
+        .text-center a {
+            color: #1877f2;
+            text-decoration: none;
+        }
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2 class="text-center">Edit Client</h2>
+    <form th:action="@{/clients/update}" method="post">
+        <input type="hidden" name="id" th:value="${client.id}">
+
+        <div class="form-group">
+            <label for="firstnameEdit">First Name:</label>
+            <input type="text" class="form-control" id="firstnameEdit" name="firstname" th:value="${client.firstname}" required>
+        </div>
+        <div class="form-group">
+            <label for="lastnameEdit">Last Name:</label>
+            <input type="text" class="form-control" id="lastnameEdit" name="lastname" th:value="${client.lastname}" required>
+        </div>
+        <div class="form-group">
+            <label for="emailEdit">Email:</label>
+            <input type="email" class="form-control" id="emailEdit" name="email" th:value="${client.email}" required>
+        </div>
+        <div class="form-group">
+            <label for="phoneEdit">Phone:</label>
+            <input type="text" class="form-control" id="phoneEdit" name="phone" th:value="${client.phone}" required>
+        </div>
+        <div class="form-group">
+            <label for="paymentEdit">Monthly Payment:</label>
+            <input type="number" class="form-control" id="paymentEdit" name="payment" th:value="${client.payment}" required>
+        </div>
+        <div class="form-group">
+            <label for="departmentEdit">Department:</label>
+            <input type="text" class="form-control" id="departmentEdit" name="department" th:value="${client.department}" required>
+        </div>
+
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+        <div class="form-group text-center">
+            <a href="#" onclick="window.history.back();">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<!-- Vendor JS Files -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

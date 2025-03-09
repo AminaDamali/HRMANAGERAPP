@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Add Client - HR Manager</title>
+
+    <link href="assets/img/lanoria23.png" rel="icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600|Roboto:300,400,500" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            padding: 20px;
+        }
+        .form-group label {
+            font-weight: 600;
+        }
+        .btn-primary {
+            background-color: #1877f2;
+            border-color: #1877f2;
+        }
+        .btn-primary:hover {
+            background-color: #165eab;
+            border-color: #165eab;
+        }
+        .text-center {
+            font-size: 14px;
+        }
+        .text-center a {
+            color: #1877f2;
+            text-decoration: none;
+        }
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2 class="text-center">Add New Client</h2>
+    <form th:action="@{/clients/add}" method="post">
+        <div class="form-group">
+            <label for="firstname">First Name:</label>
+            <input type="text" class="form-control" id="firstname" name="firstname" required>
+        </div>
+        <div class="form-group">
+            <label for="lastname">Last Name:</label>
+            <input type="text" class="form-control" id="lastname" name="lastname" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input type="text" class="form-control" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+            <label for="payment">Monthly Payment:</label>
+            <input type="number" class="form-control" id="payment" name="payment" required>
+        </div>
+        <div class="form-group">
+            <label for="department">Department:</label>
+            <input type="text" class="form-control" id="department" name="department" required>
+        </div>
+
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary">Add Client</button>
+        </div>
+        <div class="form-group text-center">
+            <a href="#" onclick="window.history.back();">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<!-- Vendor JS Files -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

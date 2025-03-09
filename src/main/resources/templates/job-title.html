@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>HR and clients Manager</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+
+    <link href="assets/img/lanoria23.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Updated: Jul 27 2023 with Bootstrap v5.3.1
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+
+
+  <div th:replace="navbar :: navbar"></div>
+  <main id="main" class="main" style="margin: 20px; padding: 20px;">
+    <div class="pagetitle">
+      <h1>Job Titles</h1>
+        <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <!-- This is an empty breadcrumb -->
+        </ol>
+    </nav>
+    </div><!-- End Page Title -->
+
+ <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+		  <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal" data-whatever="@mdo">
+			  <i class="bi bi-plus-circle"></i> New Job Title
+		  </button>
+          <div class="card">
+            <div class="card-body">
+              <!-- Table with stripped rows -->
+				<table class="table datatable">
+				    <thead>
+				        <tr>
+				            <th scope="col">id</th>
+				            <th scope="col">Name</th>
+				            <th scope="col">Description</th>
+				      		<th scope="col">Actions</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				        <tr th:each="jobTitle : ${jobTitles}">
+				            <th scope="row" th:text="${jobTitle.getId()}"></th>
+				            <td th:text="${jobTitle.getName}"></td>
+				            <td th:text="${jobTitle.getDescription}"></td>
+				            <td>
+								<div class="btn-group">
+								  <a class="btn btn-primary" id="editButton" th:href="@{/jobtitles/findbyid(id=${jobTitle.getId()})}">
+								    <i class="bi bi-pencil-fill"></i> Edit
+								  </a>
+								  <a class="btn btn-danger" id="deleteButton" th:href="@{/jobtitles/delete(id=${jobTitle.getId()})}">
+								    <i class="bi bi-trash-fill"></i> Delete
+								  </a>
+								</div>
+				            </td>
+				        </tr>
+				    </tbody>
+				</table>
+
+              <!-- End Table with stripped rows -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" >
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      <a href="https://bootstrapmade.com/"></a>
+    </div>
+  </footer><!-- End Footer -->
+  
+  <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Job Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/jobtitles/addnew}" method="post">
+                    <div class="form-group">
+                        <label for="name" class="col-form-label">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+					<div class="form-group">
+					    <label for="description" class="col-form-label">Description:</label>
+					    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+					</div>
+					<div class="form-group">
+			            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                		<button type="submit" class="btn btn-primary">Submit</button>
+					</div>                
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Job Title</h5>
+                <button type="button" class="close" onclick="closeModal()" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/jobtitles/update}" method="put">
+					<div class="form-group">
+                        <label for="id" class="col-form-label">Id:</label>
+                        <input type="text" class="form-control" id="idEdit" name="id" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="col-form-label">Name:</label>
+                        <input type="text" class="form-control" id="nameEdit" name="name" required>
+                    </div>
+					<div class="form-group">
+					    <label for="description" class="col-form-label">Description:</label>
+					    <textarea class="form-control" id="descriptionEdit" name="description" rows="3" required></textarea>
+					</div>
+					<div class="form-group">
+			            <button type="button" class="btn btn-secondary" onclick="closeModal()" data-dismiss="modal">Close</button>
+                		<button type="submit" class="btn btn-primary">Submit</button>
+					</div>                
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+
+	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Confirm delete</h5>
+	        <button type="button" class="close" onclick="closeModal()" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        <p>Are you sure you want to delete this Job Title?</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" onclick="closeModal()" data-dismiss="modal">Close</button>
+	        <a class="btn btn-primary" href="" id="confirmDeleteButton">Yes, Delete</a>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+    
+ 
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="assets/vendor/echarts/echarts.min.js"></script>
+  <script src="assets/vendor/quill/quill.min.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/jobTitle.js"></script>
+  <script src="assets/js/notification.js"></script>
+
+  
+  <script>
+    function closeModal() {
+        $('#editModal').modal('hide');
+        $('#deleteModal').modal('hide');
+    }
+  </script>
+
+
+
+</body>
+
+</html>

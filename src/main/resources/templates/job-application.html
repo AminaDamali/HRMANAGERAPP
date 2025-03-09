@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>HR and clients manager </title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+	<link href="assets/img/lanoria23.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+      
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Updated: Jul 27 2023 with Bootstrap v5.3.1
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+<div th:replace="navbar :: navbar"></div>
+  <main id="main" class="main"  style="margin: 20px; padding: 20px;">
+
+    <div class="pagetitle">
+      <h1>Applications</h1>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<!-- This is an empty breadcrumb -->
+			</ol>
+		</nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+		  <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal" data-whatever="@mdo">
+			  <i class="bi bi-plus-circle"></i> New Job Application
+		  </button>
+		  <button type="button" class="btn btn-success mb-3" data-toggle="modal" data-target="#addCandidateModal" data-whatever="@mdo">
+			  <i class="bi bi-plus-circle"></i> New Candidate
+		  </button>
+          <div class="card">
+            <div class="card-body">
+              <!-- Table with stripped rows -->
+				<table class="table datatable">
+				    <thead>
+				        <tr>
+				            <th scope="col">id</th>
+				            <th scope="col">Candidate</th>
+				       		<th scope="col">Edit/View Candidate</th>
+				            <th scope="col">Vacancy</th>
+				         	<th scope="col">Hiring Manager</th>
+				            <th scope="col">Application Date</th>
+				            <th scope="col">Status</th>
+				            <th scope="col">Update Status</th>				            			            
+				      		<th scope="col">Actions</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				        <tr th:each="jobApplication : ${jobApplications}">
+				            <th scope="row" th:text="${jobApplication.getId()}"></th>
+							<td th:text="${jobApplication.getCandidate()?.getFirstname()} + ' ' + ${jobApplication.getCandidate()?.getLastname()}"></td>
+				            <td>
+								<div class="btn-group">
+								  <a class="btn btn-primary" id="editCandidateButton" th:href="@{/candidates/findbyid(id=${jobApplication.getCandidate()?.getId()})}">
+								    <i class="bi bi-pencil-fill"></i>
+								  </a>
+								  <a class="btn btn-secondary" id="detailsCandidateButton" th:href="@{/candidates/findbyid(id=${jobApplication.getCandidate()?.getId()})}">
+								    <i class="bi bi-info-circle-fill"></i> 
+								  </a>
+								</div>
+				            </td>
+				            <td th:text="${jobApplication.getVacancy.getName}"></td>
+				            <td th:text="${jobApplication.getVacancy.getHiringManager?.getFirstname()} + ' ' + ${jobApplication.getVacancy.getHiringManager?.getLastname()}"></td>				            				        
+				            <td th:text="${#dates.format(jobApplication.getDate, 'yyyy-MM-dd')}"></td>
+				            <td th:if="${jobApplication.getStatus == 'Hired'}"><span class="badge bg-success" style="line-height: 2;">Approved</span></td>
+				            <td th:if="${jobApplication.getStatus == 'InterviewScheduled'}"><span class="badge bg-info" style="line-height: 2;">Interview Scheduled</span></td>				            
+				            <td th:if="${jobApplication.getStatus == 'ShortListed'}"><span class="badge bg-warning" style="line-height: 2;">ShortListed</span></td>
+				            <td th:if="${jobApplication.getStatus == 'Rejected'}"><span class="badge bg-danger" style="line-height: 2;">Rejected</span></td>				      
+				            <td>
+								<div class="btn-group" th:if="${jobApplication.getStatus} == 'ShortListed'">
+								  <a class="btn btn-info" style="line-height: 1; font-weight: 700;" id="scheduleInterviewButton" th:href="@{/jobapplications/setstatus(id=${jobApplication.getId()}, status='InterviewScheduled')}">
+								    Schedule Interview
+								  </a>
+								  <a class="btn btn-danger" style="line-height: 1; font-weight: 700;" id="rejectButton" th:href="@{/jobapplications/setstatus(id=${jobApplication.getId()}, status='Rejected')}">
+								    Reject
+								  </a>
+								</div>
+								<div class="btn-group" th:if="${jobApplication.getStatus} == 'InterviewScheduled'">
+								  <a class="btn btn-success" style="line-height: 1; font-weight: 700;" id="scheduleInterviewButton" th:href="@{/jobapplications/setstatus(id=${jobApplication.getId()}, status='Hired')}">
+								    Offer Job
+								  </a>
+								  <a class="btn btn-danger" style="line-height: 1; font-weight: 700;" id="rejectButton" th:href="@{/jobapplications/setstatus(id=${jobApplication.getId()}, status='Rejected')}">
+								    Reject
+								  </a>
+								</div>
+				            </td>				            
+				            <td>
+								<div class="btn-group">
+								  <a class="btn btn-primary" id="editButton" th:href="@{/jobapplications/findbyid(id=${jobApplication.getId()})}">
+								    <i class="bi bi-pencil-fill"></i>
+								  </a>
+								  <a class="btn btn-danger" id="deleteButton" th:href="@{/jobapplications/delete(id=${jobApplication.getId()})}">
+								    <i class="bi bi-trash-fill"></i>
+								  </a>
+								</div>
+				            </td>
+				        </tr>
+				    </tbody>
+				</table>
+
+              <!-- End Table with stripped rows -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" >
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      <a href="https://bootstrapmade.com/"></a>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Job Application</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/jobapplications/addnew}" method="post">
+			       <div class="form-group">
+			            <label for="candidate" class="col-form-label">Candidate:</label>
+				   		<select class="form-control" id="candidate" name="candidateid" required>
+					        <option th:each="candidate :${candidates}"
+					        	th:value="${candidate.getId()}"
+					        	th:text="${candidate.getFirstname + ' ' + candidate.getLastname}"
+					        ></option>
+						</select>                    
+					</div>
+					<div class="form-group">
+			            <label for="vacancy" class="col-form-label">Vacancy:</label>
+				   		<select class="form-control" id="vacancy" name="vacancyid" required>
+					        <option th:each="vacancy :${vacancies}"
+					        	th:value="${vacancy.getId()}"
+					        	th:text="${vacancy.getName}"
+					        ></option>
+						</select>                    
+					</div>
+					<div class="form-group">
+                        <label for="date" class="col-form-label">Date:</label>
+		                <input type="date" class="form-control" id="date" name="date" required>
+			        </div>
+		            <div class="form-group">
+                        <label for="status" class="col-form-label">Status:</label>
+					    <select class="form-control" id="status" name="status" required>
+					        <option value="Hired">Hired</option>
+					        <option value="ShortListed" selected>ShortListed</option>
+					        <option value="InterviewScheduled">InterviewScheduled</option>
+					        <option value="Rejected">Rejected</option>
+					    </select>                    
+					</div>
+					<div class="form-group">
+			            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                		<button type="submit" class="btn btn-primary">Submit</button>
+					</div>                
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Job Application</h5>
+                <button type="button" class="close" onclick="closeModal()" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/jobapplications/update}" method="put">
+				   <div class="form-group">
+			            <label for="id" class="col-form-label">Id:</label>
+		                <input type="text" class="form-control" id="idEdit" name="id" readonly>
+			       </div>
+			       <div class="form-group">
+			            <label for="candidate" class="col-form-label">Candidate:</label>
+				   		<select class="form-control" id="candidateEdit" name="candidateid" required>
+					        <option th:each="candidate :${candidates}"
+					        	th:value="${candidate.getId()}"
+					        	th:text="${candidate.getFirstname + ' ' + candidate.getLastname}"
+					        ></option>
+						</select>                    
+					</div>
+					<div class="form-group">
+			            <label for="vacancy" class="col-form-label">Vacancy:</label>
+				   		<select class="form-control" id="vacancyEdit" name="vacancyid" required>
+					        <option th:each="vacancy :${vacancies}"
+					        	th:value="${vacancy.getId()}"
+					        	th:text="${vacancy.getName}"
+					        ></option>
+						</select>                    
+					</div>
+					<div class="form-group">
+                        <label for="date" class="col-form-label">Date:</label>
+		                <input type="date" class="form-control" id="dateEdit" name="date" required>
+			        </div>
+		            <div class="form-group">
+                        <label for="status" class="col-form-label">Status:</label>
+					    <select class="form-control" id="statusEdit" name="status" required>
+					        <option value="Hired" selected>Hired</option>
+					        <option value="ShortListed">ShortListed</option>
+					        <option value="InterviewScheduled">InterviewScheduled</option>
+					        <option value="Rejected">Rejected</option>
+					    </select>                    
+					</div>
+					<div class="form-group">
+			            <button type="button" class="btn btn-secondary" onclick="closeModal()" data-dismiss="modal" >Close</button>
+                		<button type="submit" class="btn btn-primary">Submit</button>
+					</div>                
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+
+	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Confirm delete</h5>
+	        <button type="button" class="close" onclick="closeModal()" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        <p>Are you sure you want to delete this Job Application?</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" onclick="closeModal()" data-dismiss="modal">Close</button>
+	        <a class="btn btn-primary" href="" id="confirmDeleteButton">Yes, Delete</a>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<div class="modal fade" id="addCandidateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Candidate</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/candidates/addnew}" method="post" enctype="multipart/form-data">
+					<div class="form-group">
+			            <label for="firstname" class="col-form-label">First Name:</label>
+		                <input type="text" class="form-control" id="firstname" name="firstname" required>
+			        </div>
+					<div class="form-group">
+			            <label for="lastname" class="col-form-label">Last Name:</label>
+		                <input type="text" class="form-control" id="lastname" name="lastname" required>
+			        </div>
+			        <div class="form-group">
+			            <label for="email" class="col-form-label">Email:</label>
+		                <input type="email" class="form-control" id="email" name="email" required>
+			        </div>
+					<div class="form-group">
+			            <label for="phone" class="col-form-label">Phone:</label>
+		                <input type="tel" class="form-control" id="phone" name="phone" required>
+			        </div>
+					<div class="form-group">
+			            <label for="resume" class="col-form-label">Resume:</label>
+						<input type="file" name="resumeFile" id="resume" accept=".pdf" required>
+			        </div>			        			        			        
+					<div class="form-group">
+			            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                		<button type="submit" class="btn btn-primary">Submit</button>
+					</div>                
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="editCandidateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Candidate</h5>
+                <button type="button" class="close" onclick="closeModal()" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/candidates/update}" method="post" enctype="multipart/form-data">
+					<div class="form-group">
+			            <label for="id" class="col-form-label">Id:</label>
+		                <input type="text" class="form-control" id="idCandidateEdit" name="id" readonly>
+			        </div>
+					<div class="form-group">
+			            <label for="firstname" class="col-form-label">First Name:</label>
+		                <input type="text" class="form-control" id="firstnameEdit" name="firstname" required>
+			        </div>
+					<div class="form-group">
+			            <label for="lastname" class="col-form-label">Last Name:</label>
+		                <input type="text" class="form-control" id="lastnameEdit" name="lastname" required>
+			        </div>
+			        <div class="form-group">
+			            <label for="email" class="col-form-label">Email:</label>
+		                <input type="email" class="form-control" id="emailEdit" name="email" required>
+			        </div>
+					<div class="form-group">
+			            <label for="phone" class="col-form-label">Phone:</label>
+		                <input type="tel" class="form-control" id="phoneEdit" name="phone" required>
+			        </div>
+					<div class="form-group">
+			            <label for="resume" class="col-form-label">Resume:</label>
+		                <input type="file" class="form-control" accept=".pdf" id="resumeFileEdit" name="resumeFile">
+			        </div>
+			        <input type="hidden" id="resumeEdit" name="resume">			        			        			        
+					<div class="form-group">
+			            <button type="button" class="btn btn-secondary" onclick="closeModal()" data-dismiss="modal">Close</button>
+                		<button type="submit" class="btn btn-primary">Submit</button>
+					</div>                
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+   <div class="modal fade bd-example-modal-lg" id="detailsCandidateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Candidate Details </h5>
+                <button type="button" class="close" onclick="closeModal()" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+					 <div class="card">
+					            <div class="card-body pt-3">
+					             <div class="tab-content pt-2">
+					                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+					           
+					                  <h5 class="card-title">Profile Details</h5>
+					
+					                  <div class="row">
+					                    <div class="col-lg-5 col-md-4 label " style="color: #01297099;  font-weight: 600;">Full Name</div>
+					                    <div class="col-lg-7 col-md-8" id="fullnameDetails"></div>
+					                  </div>
+					
+					                  <div class="row">
+					                    <div class="col-lg-5 col-md-4 label" style="color: #01297099;  font-weight: 600;">Email</div>
+					                    <div class="col-lg-7 col-md-8" id="emailDetails"></div>
+					                  </div>
+					
+					                  <div class="row">
+					                    <div class="col-lg-5 col-md-4 label" style="color: #01297099;  font-weight: 600;">Phone</div>
+					                    <div class="col-lg-7 col-md-8" id="phoneDetails"></div>
+					                  </div>
+					
+					                  <div class="row">
+					                    <div class="col-lg-5 col-md-4 label" style="color: #01297099;  font-weight: 600;">Resume</div>
+					                    <div class="col-lg-7 col-md-8">    
+											<a class="btn btn-primary" id="resumeDetails" >
+									        	Open Resume
+									    	</a>
+									    </div>
+					                  </div>	          					                  					                 
+					                </div>
+					             </div>
+					            </div>
+					          </div>
+					</div>
+            </div>
+        </div>
+    </div>
+    
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="assets/vendor/echarts/echarts.min.js"></script>
+  <script src="assets/vendor/quill/quill.min.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/jobApplication.js"></script>
+  <script src="assets/js/notification.js"></script>
+
+  
+  <script>
+    function closeModal() {
+        $('#editModal').modal('hide');
+        $('#deleteModal').modal('hide');
+        $('#detailsCandidateModal').modal('hide');
+        $('#editCandidateModal').modal('hide');   
+    }
+  </script>
+
+</body>
+
+</html>

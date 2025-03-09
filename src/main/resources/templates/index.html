@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>HR and clients  Manager </title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+
+  <link href="assets/img/lanoria23.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+
+
+  <div th:replace="navbar :: navbar"></div>
+  <main id="main" class="main"  style="margin: 20px; padding: 20px;">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <!-- This is an empty breadcrumb -->
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+
+            <!-- Employees Number Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">Employees <span>| Total Number</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+          			  <i class="bi bi-person"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 th:text="${employeesNumber}"></h6>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Employees Number Card -->
+
+            <!-- New Hires Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" onclick="toThisMonth()">This Month</a></li>
+                    <li><a class="dropdown-item" onclick="toThisYear()">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">New Hires <span id="thisYearSpan">| This Year</span><span id="thisMonthSpan" style="display: none;" >| This Month</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+					  <i class="bi bi-person-plus"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 id="thisMonthH6" style="display: none;" th:text="${newHiresThisMonth}"></h6>
+                      <h6 id="thisYearH6" th:text="${newHiresThisYear}"></h6>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End New Hires Card -->
+
+            <!-- Leaves today -->
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                <div class="card-body">
+                  <h5 class="card-title"><span>Employees on</span> Leave Today</h5>
+
+                  <table class="table table-borderless datatable">
+                    <thead>
+				        <tr>
+				            <th scope="col">id</th>
+				            <th scope="col">Employee Name</th>
+				            <th scope="col">Start Date</th>
+				            <th scope="col">End Date</th>
+				            <th scope="col">Duration (Days)</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				        <tr th:each="leave : ${currentLeaves}">
+				            <th scope="row" th:text="${leave.getId()}"></th>
+							<td th:text="${leave.getEmployee()?.getFirstname()} + ' ' + ${leave.getEmployee()?.getLastname()}"></td>
+				            <td th:text="${#dates.format(leave.getStartDate, 'yyyy-MM-dd')}"></td>
+				            <td th:text="${#dates.format(leave.getEndDate, 'yyyy-MM-dd')}"></td>
+				            <td th:text="${leave.getDaysBetweenDates(leave.getStartDate)}"></td>
+				        </tr>
+				    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Leaves Today -->
+
+            <!-- Job Interviews -->
+            <div class="col-12">
+              <div class="card top-selling overflow-auto">
+
+                <div class="card-body pb-0">
+                  <h5 class="card-title"><span>Job Applications with</span> Scheduled Interviews</h5>
+
+                  <table class="table table-borderless">
+                    <thead>
+                      <tr>
+			            <th scope="col">id</th>
+			            <th scope="col">Candidate</th>
+				        <th scope="col">Vacancy</th>
+				       	<th scope="col">Hiring Manager</th>
+				        <th scope="col">Application Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+ 					  <tr th:each="jobApplication : ${interviews}">
+				        <th scope="row" th:text="${jobApplication.getId()}"></th>
+				    	<td th:text="${jobApplication.getCandidate()?.getFirstname()} + ' ' + ${jobApplication.getCandidate()?.getLastname()}"></td>
+				        <td th:text="${jobApplication.getVacancy.getName}"></td>
+				        <td th:text="${jobApplication.getVacancy.getHiringManager?.getFirstname()} + ' ' + ${jobApplication.getVacancy.getHiringManager?.getLastname()}"></td>				            				        
+				        <td th:text="${#dates.format(jobApplication.getDate, 'yyyy-MM-dd')}"></td>
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Job Interviews -->
+
+          </div>
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+        <!-- Jobs Distribution -->
+          <div class="card">
+
+            <div class="card-body pb-0">
+              <h5 class="card-title">Jobs Distribution</h5>
+
+              <div id="trafficChart1" style="min-height: 400px;" class="echart"></div>
+
+              <script th:inline="javascript">
+                document.addEventListener("DOMContentLoaded", () => {
+					
+				var trafficData = [[${employeesByJobs}]];
+                var pieData = [];
+
+                for (const key in trafficData) {
+                    if (trafficData.hasOwnProperty(key)) {
+                        pieData.push({
+                            value: trafficData[key],
+                            name: key
+                        });
+                    }
+                }
+                  echarts.init(document.querySelector("#trafficChart1")).setOption({
+                    tooltip: {
+                      trigger: 'item'
+                    },
+                    legend: {
+                      top: '5%',
+                      left: 'center'
+                    },
+                    series: [{
+                      name: 'Access From',
+                      type: 'pie',
+                      radius: ['40%', '70%'],
+                      avoidLabelOverlap: false,
+                      label: {
+                        show: false,
+                        position: 'center'
+                      },
+                      emphasis: {
+                        label: {
+                          show: true,
+                          fontSize: '18',
+                          fontWeight: 'bold'
+                        }
+                      },
+                      labelLine: {
+                        show: false
+                      },
+                      data: pieData
+                    }]
+                  });
+                });
+              </script>
+
+            </div>
+          </div><!-- End Jobs Distribution -->
+
+           <!-- Status Distribution -->
+          <div class="card">
+
+            <div class="card-body pb-0">
+              <h5 class="card-title"><span>Employee Distribution by </span>Employment Status</h5>
+
+              <div id="trafficChart2" style="min-height: 400px;" class="echart"></div>
+
+              <script th:inline="javascript">
+                document.addEventListener("DOMContentLoaded", () => {
+					
+				var trafficData = [[${employeesByEmployeeType}]];
+                var pieData = [];
+
+                for (const key in trafficData) {
+                    if (trafficData.hasOwnProperty(key)) {
+                        pieData.push({
+                            value: trafficData[key],
+                            name: key
+                        });
+                    }
+                }
+                  echarts.init(document.querySelector("#trafficChart2")).setOption({
+                    tooltip: {
+                      trigger: 'item'
+                    },
+                    legend: {
+                      top: '5%',
+                      left: 'center'
+                    },
+                    series: [{
+                      name: 'Access From',
+                      type: 'pie',
+                      radius: ['40%', '70%'],
+                      avoidLabelOverlap: false,
+                      label: {
+                        show: false,
+                        position: 'center'
+                      },
+                      emphasis: {
+                        label: {
+                          show: true,
+                          fontSize: '18',
+                          fontWeight: 'bold'
+                        }
+                      },
+                      labelLine: {
+                        show: false
+                      },
+                      data: pieData
+                    }]
+                  });
+                });
+              </script>
+
+            </div>
+          </div><!-- End Jobs Distribution -->
+
+            </div>
+          </div><!-- End News & Updates -->
+
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" >
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      <a href="https://bootstrapmade.com/"></a>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="assets/vendor/echarts/echarts.min.js"></script>
+  <script src="assets/vendor/quill/quill.min.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/notification.js"></script>
+  
+  <script>
+	const thisYearSpan = document.getElementById('thisYearSpan');
+	const thisMonthSpan = document.getElementById('thisMonthSpan');
+	const thisYearH6 = document.getElementById('thisYearH6');
+	const thisMonthH6 = document.getElementById('thisMonthH6');
+
+    function toThisYear() {
+		thisYearSpan.style.display = 'inline';
+		thisMonthSpan.style.display = 'none';
+		thisYearH6.style.display = 'inline';
+		thisMonthH6.style.display = 'none';
+    }
+    
+    function toThisMonth() {
+		thisYearSpan.style.display = 'none';
+		thisMonthSpan.style.display = 'inline';
+		thisYearH6.style.display = 'none';
+		thisMonthH6.style.display = 'inline';
+    }
+  </script>
+
+</body>
+
+</html>
